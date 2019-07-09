@@ -18,14 +18,14 @@
 		<meta name="twitter:image" content="http://seiu503.org/wp-content/uploads/2017/11/facebook_logo.png" />
 		<meta name="twitter:site" content="@SEIULocal503" />
 		<meta name="twitter:creator" content="@SEIULocal503" />
+		<script src="script.js" />
 		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
-		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
+		<script defer src="https://kit.fontawesome.com/72276a245c.js"></script>
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
   	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
 		<link rel='stylesheet' id='every-action-css'  href='style.css' type='text/css' media='all' />
-		<link rel="stylesheet" id="google-fonts-css" href="//fonts.googleapis.com/css?family=Orbitron%7CLato%3A400%2C700%2C800%2C900%7CNunito%3A400%2C700%7CSource+Sans+Pro%3A400%2C700&amp;ver=5.2.2" type="text/css" media="all">
+		<link href="https://fonts.googleapis.com/css?family=Lato:400,700,900|Orbitron|Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Orbitron" rel="stylesheet">
-		<link rel="stylesheet" id="font-awesome-css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css?ver=4.9.1" type="text/css" media="all">
 		<link rel="stylesheet" id="theme-style-css" href="https://seiu503.org/wp-content/themes/custom_template/style.css?ver=5.2.2" type="text/css" media="all">
 		<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://seiu503.org/wp-includes/wlwmanifest.xml" />
 		<link rel="icon" href="http://seiu503.org/wp-content/uploads/2017/10/cropped-favicon-150x150.png" sizes="32x32" />
@@ -53,15 +53,30 @@
       <div class="row" id="maincontent">
 				<h2 class="page-title">2019 State Worker Raise Calculator</h2>
 				<p>Some body copy / intro goes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+				<h3 class="center">
+					Enter your monthly base pay and click Submit.
+				</h3>
+				<p class="center">(Numbers and decimal points only)</p>
 				<div class="calc-container">
 			    <div class="outerwrap">
 			      <div class="calculator">
 			        <div class="dispwrap">
-			          <div id="display" class="normal"></div>
+			          <input
+			          	id="display"
+			          	class="display"
+			          	type="text"
+			          	pattern="\d*"
+			          	autofocus
+			          ></input>
 			          <div id="exp"></div>
 			        </div>
 			        <div class="keycont">
-			          <button class="calcbtn waves-effect waves-light submit" id="submit" value="submit">Submit</button>
+			          <button
+			          	class="calcbtn waves-effect waves-light submit"
+			          	id="submit"
+			          	value="submit"
+			          >Submit
+			        	</button>
 			        </div>
 			      </div>
 			    </div>

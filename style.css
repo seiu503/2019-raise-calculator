@@ -69,10 +69,6 @@
   padding: 40px;
 }
 
-.center {
-  text-align: center;
-}
-
 img {
   max-width: 100%;
   height: auto;
@@ -233,6 +229,13 @@ button {
    text-shadow: 0px 2px 1px rgba(0,0,0,0.2);
 }
 
+.display {
+  background: transparent;
+  outline: none;
+  border: none;
+  font-family: Orbitron, monospace;
+}
+
 #exp {
   font-size: .75em;
   width: 100%;
@@ -298,6 +301,11 @@ button {
 .keycont {
   padding-left: 7px;
   margin: auto;
+}
+
+.center {
+  width: 100%;
+  text-align: center;
 }
 
 
