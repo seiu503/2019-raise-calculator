@@ -14,16 +14,45 @@ function setInputFilter(textbox, inputFilter) {
   });
 }
 
+// app starts in 'input' state which allows user to enter base pay
+let appState = 'input';
+
+// set variables
+let COLA = .03;
+let toppedOut = false;
+
 document.addEventListener("DOMContentLoaded", function(){
 
-  // Restrict input to digits and '.' by using a regular expression filter.
-  setInputFilter(document.getElementById("display"), function(value) {
+  // save elements to variables for later access
+  let display = document.getElementById("display");
+  let submit = document.getElementById("submit");
+  let keys = document.getElementById("keys");
+  let buttonsNodeList = document.getElementsByClassName("calcbtn");
+  buttons = Array.from(buttonsNodeList);
+
+  // Restrict input to digits and '.' with regex filter.
+  setInputFilter(display, function(value) {
     return /^\d*\.?\d*$/.test(value);
   });
 
-  // set variables
+  // On submit, hide keypad and display results
+  function handleSubmit() {
+    const basePay = display.value;
+    totalLifeOfContract(basePay, toppedOut, COLA);
+    keys.setAttribute("style", "height:0;");
+    buttons.forEach(btn =>
+      btn.setAttribute("style", "height:0; padding: 0; border: 0")
+    );
+  }
 
-  let toppedOut = false;
+  // Listen for 'Enter' keyup in input field to trigger submit
+  display.addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      handleSubmit();
+    }
+  });
+
+  submit.addEventListener("click", handleSubmit);
 
   // formulas
   function monthlyRaise(basePay, COLA, toppedOut) {
@@ -73,12 +102,5 @@ document.addEventListener("DOMContentLoaded", function(){
 
     return lifeOfContract;
   }
-
-  document.getElementById('submit').addEventListener("click", function(){
-    console.log('click');
-    const basePay = document.getElementById('display').value;
-    console.log(basePay);
-    totalLifeOfContract(basePay, false, .03);
-    });
 
 });
