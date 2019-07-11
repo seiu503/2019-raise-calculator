@@ -170,8 +170,9 @@ document.addEventListener("DOMContentLoaded", function(){
   function handleSubmit() {
     keys.setAttribute("style", "height:0;");
     buttons.forEach(btn =>
-      btn.setAttribute("style", "height:0; padding: 0; border: 0")
+      btn.setAttribute("style", "height:0; padding: 0; border: 0; display:none;")
     );
+    submit.setAttribute("style", "display:none;");
     startOver.setAttribute("style", "height:3rem; padding: 1rem 0; border: 1px solid white");
     dispwrap.setAttribute("style", "margin-bottom: 0;");
     instructions.setAttribute("style", "height: 0; display:none;");

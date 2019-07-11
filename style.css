@@ -9,9 +9,13 @@
 .site-banner, .footer-lower {
 	width: 100%;
   background: #531078;
-  height: 83px;
+  height: 109px;
   padding: 10px;
   }
+
+.page-title {
+  margin-left: 0px !important;
+}
 
 .footer-lower {
   display: flex;
