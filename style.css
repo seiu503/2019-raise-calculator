@@ -180,6 +180,80 @@ img {
   padding: 20px;
 }
 
+.toppedOutLabel {
+  width: 100%;
+  font-size: 18px;
+  color: #531078;
+  font-family: Lato,sans-serif;
+  margin-bottom: 40px;
+}
+
+.cbcontainer {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.cbcontainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 30px;
+  width: 30px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a purple background */
+.container input:checked ~ .checkmark {
+  background-color: #983eca;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 10px;
+  top: 3px;
+  width: 7px;
+  height: 15px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
 /* calculator */
 button {
   color: #fff;
@@ -218,6 +292,7 @@ button {
   background: linear-gradient(#2ecc71, #27ae60);
   box-shadow: inset 0px 0px 10px rgba(0,0,0,0.5);
   letter-spacing: 1px;
+  transition: all 1s ease-in-out;
 }
 
 #display {
@@ -279,12 +354,28 @@ button {
 
 .submit {
   width: 238px;
-  padding: 1.1rem 0 .9rem;
+  padding: 1rem 0;
   background-color: #FFA726;
+  height: 3rem;
 }
 .submit:hover {
   background-color: #ffce04;
 }
+
+.start-over {
+  width: 238px;
+  padding: 0 0;
+  border: 0;
+  background-color: #b483dc;
+  color: #531078;
+  height: 0rem;
+  transition: all 1s ease-in-out;
+}
+.start-over:hover {
+  background-color: #e3ccf5;
+  color: #531078;
+}
+
 
 #results {
   font-size: 2em;

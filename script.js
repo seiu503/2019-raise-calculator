@@ -1,5 +1,4 @@
 // todo:
-// add startOver button in results mode
 // add toppedOut checkbox
 // check calcbtn functionality
 // test keyboard functionality
@@ -34,7 +33,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // save elements to variables for later access
   let display = document.getElementById("display");
+  let dispwrap = document.getElementById("dispwrap");
   let submit = document.getElementById("submit");
+  let startOver = document.getElementById("startOver");
   let keys = document.getElementById("keys");
   let buttonsNodeList = document.getElementsByClassName("calcbtn");
   buttons = Array.from(buttonsNodeList);
@@ -50,6 +51,11 @@ document.addEventListener("DOMContentLoaded", function(){
     return `<p>If your base pay is $${basePay}, your raise in the first year of the contract will be <strong>$${firstYearRaise}</strong> per month. In the second year of the contract it will be <strong>$${secondYearRaise}</strong> per month. Over the two years of the contract this adds up to an extra <strong>$${lifeOfContractTotal} in your pocket.</p>`
   }
 
+  // On reload, reload page
+  function handleReload() {
+    window.location.reload();
+  }
+
   // On submit, hide keypad and display results
   function handleSubmit() {
     const basePay = parseFloat(display.value).toFixed(2);
@@ -57,6 +63,8 @@ document.addEventListener("DOMContentLoaded", function(){
     buttons.forEach(btn =>
       btn.setAttribute("style", "height:0; padding: 0; border: 0")
     );
+    startOver.setAttribute("style", "height:3rem; padding: 1rem 0; border: 1px solid white");
+    dispwrap.setAttribute("style", "margin-bottom: 0;");
     let lifeOfContractTotal = totalLifeOfContract(basePay, toppedOut, COLA);
     display.value = lifeOfContractTotal;
     let firstYearRaise = monthlyRaise(basePay, COLA, toppedOut);
@@ -74,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   submit.addEventListener("click", handleSubmit);
+  startOver.addEventListener("click", handleReload);
 
   // formulas
   function monthlyRaise(basePay, COLA, toppedOut) {
