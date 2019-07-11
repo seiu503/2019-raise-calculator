@@ -1,4 +1,4 @@
-// Restricts input for the given textbox to the given inputFilter.
+// Restricts input for the textbox to the given inputFilter.
 function setInputFilter(textbox, inputFilter) {
   ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
     textbox.addEventListener(event, function() {
@@ -15,42 +15,70 @@ function setInputFilter(textbox, inputFilter) {
 }
 
 document.addEventListener("DOMContentLoaded", function(){
+
   // Restrict input to digits and '.' by using a regular expression filter.
   setInputFilter(document.getElementById("display"), function(value) {
     return /^\d*\.?\d*$/.test(value);
   });
 
   // set variables
-  let basePay;
-  let toppedOut;
+
+  let toppedOut = false;
 
   // formulas
   function monthlyRaise(basePay, COLA, toppedOut) {
+    const basePay_ = parseFloat(basePay);
+    const COLA_ = parseFloat(COLA);
     if (toppedOut) {
-      return basepay * COLA;
+      let raise = (basePay_ * COLA_).toFixed(2);
+      console.log(`monthly raise: ${raise}`);
+      return raise;
     } else {
-      return (basePay * COLA) + (basePay * .047);
+      let raise = ((basePay_ * COLA_) + (basePay_ * .047)).toFixed(2);
+      console.log(`monthly raise: ${raise}`);
+      return raise;
     }
-
   }
 
   function newBasePay(basePay, monthlyRaise) {
-    return basePay + monthlyRaise;
+    const basePay_ = parseFloat(basePay);
+    const monthlyRaise_ = parseFloat(monthlyRaise);
+    let newPay = (basePay_ + monthlyRaise_).toFixed(2);
+    console.log(`newBasePay: ${newPay}`)
+    return newPay;
   }
 
-  function annualImpact(newBasePay) {
-    return newBasePay * 12;
+  function annualImpact(monthlyRaise) {
+    let impact = (monthlyRaise * 12).toFixed(2);
+    console.log(`annualImpact: ${impact}`);
+    return impact;
   }
 
   function totalLifeOfContract(basePay, toppedOut, COLA) {
-    if (toppedOut) {
-      let firstYearBasePay = newBasePay(basePay, monthlyRaise(basePay, COLA, false));
-      let firstYearTotal = annualImpact(firstYearBasePay);
-      console.log(`firstYearTotal: ${firstYearTotal}`);
-      let secondYearBasePay = newBasePay(firstYearBasePay, monthlyRaise(firstYearBasePay, COLA, true));
-      let secondYearTotal = annualImpact(secondYearBasePay);
-      console.log(`secondYearTotal: ${secondYearTotal}`);
-      return firstYearTotal + secondYearTotal;
-    }
+    const basePay_ = parseFloat(basePay);
+    const COLA_ = parseFloat(COLA);
+
+    let firstYearRaise = monthlyRaise(basePay_, COLA_, toppedOut);
+    let firstYearBasePay = newBasePay(basePay_, monthlyRaise(basePay_, COLA_, toppedOut));
+    let firstYearTotal = annualImpact(firstYearRaise);
+    console.log(`firstYearTotal: ${firstYearTotal}`);
+
+    let secondYearRaise = monthlyRaise(firstYearBasePay, COLA_, toppedOut);
+    let secondYearBasePay = newBasePay(firstYearBasePay, monthlyRaise(firstYearBasePay, COLA_, toppedOut));
+    let secondYearTotal = annualImpact(secondYearRaise);
+    console.log(`secondYearTotal: ${secondYearTotal}`);
+
+    let lifeOfContract = (parseFloat(firstYearTotal) + parseFloat(secondYearTotal)).toFixed(2);
+    console.log(`lifeOfContract: ${lifeOfContract}`);
+
+    return lifeOfContract;
   }
+
+  document.getElementById('submit').addEventListener("click", function(){
+    console.log('click');
+    const basePay = document.getElementById('display').value;
+    console.log(basePay);
+    totalLifeOfContract(basePay, false, .03);
+    });
+
 });
