@@ -295,6 +295,10 @@ button {
   transition: all 1s ease-in-out;
 }
 
+#instructions {
+  transition: height 1s ease-in-out;
+}
+
 #display {
   font-size: 2.4em;
   width: 100%;

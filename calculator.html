@@ -18,6 +18,8 @@
 		<meta name="twitter:image" content="http://seiu503.org/wp-content/uploads/2017/11/facebook_logo.png" />
 		<meta name="twitter:site" content="@SEIULocal503" />
 		<meta name="twitter:creator" content="@SEIULocal503" />
+<!-- 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bignumber.js/2.1.4/bignumber.min.js" /> -->
 		<script src="script.js" />
 		<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
 		<script defer src="https://kit.fontawesome.com/72276a245c.js"></script>
@@ -58,20 +60,22 @@
 
 				<p>One of our key wins was a package of cost of living increases (COLAs) and steps that will increase wages by an average of X% over the next two years. The calculator below will provide you with an estimate of your raise, based on the average step increase of 4.7%.</p>
 				<hr />
-				<h3 class="center">
-					Check box if you are topped out. Then enter your monthly base pay and click Submit.
-				</h3>
-				<p class="center disclaimer">(Calculator input accepts numbers and decimal points only, no commas or dollar signs.)</p>
-				<label for="toppedOut" class="toppedOutLabel cbcontainer">
-					&larr; Check box if you are currently topped out
-					<input
-						type="checkbox"
-						name="toppedOut"
-						id="toppedOut"
-						class="toppedOut"
-					/>
-					<span class="checkmark"></span>
-				</label>
+				<div id="instructions">
+					<h3 class="center">
+						Check box if you are topped out. Then enter your monthly base pay and click Submit.
+					</h3>
+					<p class="center disclaimer">(Calculator input accepts numbers and decimal points only, no commas or dollar signs.)</p>
+					<label for="toppedOut" class="toppedOutLabel cbcontainer" id="toppedOutLabel">
+						&larr; Check box if you are currently topped out
+						<input
+							type="checkbox"
+							name="toppedOut"
+							id="toppedOut"
+							class="toppedOut"
+						/>
+						<span class="checkmark"></span>
+					</label>
+				</div>
 				<div class="calc-container">
 			    <div class="outerwrap">
 			      <div class="calculator">
@@ -94,23 +98,23 @@
 			        	</button>
 			        	<div id="keys">
 				        	<div class="keyrow">
-					          <button class="calcbtn waves-effect waves-light " id="seven" value="7">7</button>
-					          <button class="calcbtn waves-effect waves-light " id="eight" value="8">8</button>
-					          <button class="calcbtn waves-effect waves-light " id="nine" value="9">9</button>
+					          <button class="calcbtn waves-effect waves-light num" id="seven" value="7">7</button>
+					          <button class="calcbtn waves-effect waves-light num" id="eight" value="8">8</button>
+					          <button class="calcbtn waves-effect waves-light num" id="nine" value="9">9</button>
 				        	</div>
 									<div class="keyrow">
-					          <button class="calcbtn waves-effect waves-light " id="four" value="4">4</button>
-					          <button class="calcbtn waves-effect waves-light " id="five" value="5">5</button>
-					          <button class="calcbtn waves-effect waves-light " id="six" value="6">6</button>
+					          <button class="calcbtn waves-effect waves-light num" id="four" value="4">4</button>
+					          <button class="calcbtn waves-effect waves-light num" id="five" value="5">5</button>
+					          <button class="calcbtn waves-effect waves-light num" id="six" value="6">6</button>
 									</div>
 									<div class="keyrow">
-					          <button class="calcbtn waves-effect waves-light " id="one" value="1">1</button>
-					          <button class="calcbtn waves-effect waves-light " id="two" value="2">2</button>
-					          <button class="calcbtn waves-effect waves-light " id="three" value="3">3</button>
+					          <button class="calcbtn waves-effect waves-light num" id="one" value="1">1</button>
+					          <button class="calcbtn waves-effect waves-light num" id="two" value="2">2</button>
+					          <button class="calcbtn waves-effect waves-light num" id="three" value="3">3</button>
 									</div>
 									<div class="keyrow">
-					          <button class="calcbtn waves-effect waves-light " id="zero" value="0">0</button>
-					          <button class="calcbtn waves-effect waves-light dot" id="dot" value=".">.</button>
+					          <button class="calcbtn waves-effect waves-light num" id="zero" value="0">0</button>
+					          <button class="calcbtn waves-effect waves-light dot num" id="dot" value=".">.</button>
 				        	</div>
 				        </div>
 			          <button
