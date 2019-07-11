@@ -1,3 +1,12 @@
+// todo:
+// add startOver button in results mode
+// add toppedOut checkbox
+// check calcbtn functionality
+// test keyboard functionality
+// c2a member form after results displayed
+// test on phone
+
+
 // Restricts input for the textbox to the given inputFilter.
 function setInputFilter(textbox, inputFilter) {
   ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
@@ -29,20 +38,32 @@ document.addEventListener("DOMContentLoaded", function(){
   let keys = document.getElementById("keys");
   let buttonsNodeList = document.getElementsByClassName("calcbtn");
   buttons = Array.from(buttonsNodeList);
+  let results = document.getElementById("results");
 
   // Restrict input to digits and '.' with regex filter.
   setInputFilter(display, function(value) {
     return /^\d*\.?\d*$/.test(value);
   });
 
+  // generate results string and message
+  function resultsString(basePay, firstYearRaise, secondYearRaise, lifeOfContractTotal) {
+    return `<p>If your base pay is $${basePay}, your raise in the first year of the contract will be <strong>$${firstYearRaise}</strong> per month. In the second year of the contract it will be <strong>$${secondYearRaise}</strong> per month. Over the two years of the contract this adds up to an extra <strong>$${lifeOfContractTotal} in your pocket.</p>`
+  }
+
   // On submit, hide keypad and display results
   function handleSubmit() {
-    const basePay = display.value;
-    totalLifeOfContract(basePay, toppedOut, COLA);
+    const basePay = parseFloat(display.value).toFixed(2);
     keys.setAttribute("style", "height:0;");
     buttons.forEach(btn =>
       btn.setAttribute("style", "height:0; padding: 0; border: 0")
     );
+    let lifeOfContractTotal = totalLifeOfContract(basePay, toppedOut, COLA);
+    display.value = lifeOfContractTotal;
+    let firstYearRaise = monthlyRaise(basePay, COLA, toppedOut);
+    let firstYearBasePay = newBasePay(basePay, monthlyRaise(basePay, COLA, toppedOut));
+    let secondYearRaise = monthlyRaise(firstYearBasePay, COLA, toppedOut);
+    results.innerHTML = resultsString(basePay, firstYearRaise, secondYearRaise, lifeOfContractTotal);
+
   }
 
   // Listen for 'Enter' keyup in input field to trigger submit

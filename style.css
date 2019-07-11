@@ -286,6 +286,15 @@ button {
   background-color: #ffce04;
 }
 
+#results {
+  font-size: 2em;
+}
+
+.disclaimer {
+  font-size: .9em;
+  color: gray;
+}
+
 #equals {
   position: relative;
   top: -43px;
