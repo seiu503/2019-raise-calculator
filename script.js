@@ -60,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function(){
   // listen for changes to display
   displayEl.addEventListener("change", function(event) {
     basePay = Number(this.value);
-    console.log(typeof basePay);
     console.log(`basePay: ${basePay}`);
   });
 
@@ -134,13 +133,11 @@ document.addEventListener("DOMContentLoaded", function(){
     if (!basePayVar) {basePayVar = basePay}
     const monthlyRaise_ = Number(monthlyRaiseAmount);
     let newPay = (basePayVar + monthlyRaise_).toFixed(2);
-    console.log(`newBasePay: ${newPay}`)
     return newPay;
   }
 
   function firstYearRaise() {
     const firstYearRaiseAmount = monthlyRaise();
-    console.log(`firstYearRaise: ${firstYearRaiseAmount}`);
     return firstYearRaiseAmount;
   }
 
@@ -154,17 +151,12 @@ document.addEventListener("DOMContentLoaded", function(){
   function secondYearRaise(firstYearBasePayAmount) {
     const basePayAmount = Number(firstYearBasePayAmount);
     const secondYearRaiseAmount = monthlyRaise(basePayAmount, 2);
-    console.log(`secondYearRaise: ${secondYearRaiseAmount}`);
     return secondYearRaiseAmount;
   }
 
   function secondYearBasePay(firstYearBasePayAmount) {
     const basePayAmount = Number(firstYearBasePayAmount);
-    console.log(`################## ${basePayAmount}`);
-    console.log(typeof basePayAmount);
     const secondYearRaiseAmount = Number(monthlyRaise(basePayAmount, 2));
-    console.log(`################## ${secondYearRaiseAmount}`);
-    console.log(typeof secondYearRaiseAmount);
     const secondYearBasePayAmount = Number(basePayAmount + secondYearRaiseAmount).toFixed(2);
     console.log(`secondYearBasePay: ${secondYearBasePayAmount}`);
     return Number(secondYearBasePayAmount);
@@ -180,7 +172,6 @@ document.addEventListener("DOMContentLoaded", function(){
       // minus original base pay * 12 (diff between original & contract wins)
       let secondYearMonthlyAfterCOLA = Number(basePayVar + (basePayVar * COLA2));
       impact = ((Number(secondYearMonthlyAfterCOLA) * 12) - Number(basePay_ * 12)).toFixed(2);
-      console.log(`!@#$%%^&* ${Number(impact)}`);
     } else if (year === 2 && !toppedOut) {
       // if not topped out, annual impact in year 2 is
       // final first year's base pay (after step) plus 2nd year COLA * 6
@@ -191,24 +182,17 @@ document.addEventListener("DOMContentLoaded", function(){
       let secondYearMonthlyAfterStep = Number(secondYearMonthlyAfterCOLA + (secondYearMonthlyAfterCOLA * step));
       let impact2nd6Months = (secondYearMonthlyAfterStep - basePay_) * 6;
       impact = (impact1st6Months + impact2nd6Months).toFixed(2);
-      console.log(`!@#$%%^&* ${Number(impact)}`);
     } else {
       // in year 1, basePay is user-provided base pay
       // before any steps or COLAs are applied
       // impact is 12 months of COLA plus 6 months of step
       // minus original base pay * 12 (diff between original & contract wins)
       let firstYearMonthlyAfterCOLA = Number(basePay_ + (basePay_ * COLA1));
-      console.log(`!@#$%%^&* ${firstYearMonthlyAfterCOLA}`);
       let impact1st6Months = (basePay_ * COLA1) * 6;
-      console.log(`!@#$%%^&* ${impact1st6Months.toFixed(2)}`);
       let firstYearMonthlyAfterStep = Number(firstYearMonthlyAfterCOLA + (firstYearMonthlyAfterCOLA * step));
-      console.log(`!@#$%%^&* ${firstYearMonthlyAfterStep.toFixed(2)}`);
       let impact2nd6Months = (firstYearMonthlyAfterStep - basePay_) * 6;
-      console.log(`!@#$%%^&* ${impact2nd6Months.toFixed(2)}`);
       impact = (impact1st6Months + impact2nd6Months).toFixed(2);
-      console.log(`!@#$%%^&* ${Number(impact)}`);
     }
-    console.log(`annualImpact: ${Number(impact)}`);
     return Number(impact);
   }
 
@@ -217,21 +201,21 @@ document.addEventListener("DOMContentLoaded", function(){
     let firstYearRaiseAmount = firstYearRaise();
     let firstYearBasePayAmount = firstYearBasePay();
     let firstYearTotal = annualImpact(1);
-    console.log(`firstYearTotal: ${firstYearTotal}`);
+    console.log(`firstYearTotalImpact: ${firstYearTotal}`);
 
     let secondYearRaiseAmount = secondYearRaise(firstYearBasePayAmount);
     let secondYearTotal = annualImpact(2, firstYearBasePayAmount);
-    console.log(`secondYearTotal: ${secondYearTotal}`);
+    console.log(`secondYearTotalImpact: ${secondYearTotal}`);
 
     let lifeOfContract = (Number(firstYearTotal) + Number(secondYearTotal)).toFixed(2);
-    console.log(`lifeOfContract: ${lifeOfContract}`);
+    console.log(`lifeOfContractTotal: ${lifeOfContract}`);
 
     return Number(lifeOfContract);
   }
 
   // generate results string and message
   function resultsString(firstYearRaiseAmount, secondYearRaiseAmount, lifeOfContractTotal, secondYearBasePayAmount) {
-    return `<p>If your base pay is $${basePay}${toppedOut ? " and you are topped out," : ","} your total raise in the first year of the contract after your step increase will be <strong>$${firstYearRaiseAmount}</strong> per month. In the second year of the contract${!toppedOut ? " after your step increase" : ""} it will be <strong>$${secondYearRaiseAmount}</strong> per month. Over the two years of the contract this adds up to an extra <strong>$${lifeOfContractTotal} in your pocket. And by July 1 2020, your new monthly base pay will be $${secondYearBasePayAmount}</p>`
+    return `<p>If your base pay is $${basePay}${toppedOut ? " and you are topped out," : ","} your total raise in the first year of the contract after your step increase will be <strong>$${firstYearRaiseAmount}</strong> per month. In the second year of the contract${!toppedOut ? " after your step increase" : ""} it will be <strong>$${secondYearRaiseAmount}</strong> per month. Over the two years of the contract this adds up to an extra <strong>$${lifeOfContractTotal} in your pocket.</strong> And by July 1 2020, your new monthly base pay will be <strong>$${secondYearBasePayAmount}</strong></p>`
   }
 
   // On reload, reload page
@@ -249,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function(){
     startOver.setAttribute("style", "height:3rem; padding: 1rem 0; border: 1px solid white");
     dispwrap.setAttribute("style", "margin-bottom: 0;");
     instructions.setAttribute("style", "height: 0; display:none;");
+    message.setAttribute("style", "display:block;");
     let totalLifeOfContractAmount = totalLifeOfContract();
     displayEl.value = totalLifeOfContractAmount;
     let firstYearRaiseAmount = firstYearRaise();
