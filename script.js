@@ -22,7 +22,9 @@ function setInputFilter(textbox, inputFilter) {
 }
 
 // set global variables
-let COLA = .03;
+let COLA1 = .0215;
+let COLA2 = .03;
+let step  = .047;
 let toppedOut = false;
 let basePay = 0;
 let prevNum = null;
@@ -96,19 +98,42 @@ document.addEventListener("DOMContentLoaded", function(){
   function monthlyRaise(basePayVar, year) {
     if (!basePayVar) {basePayVar = basePay}
     if (year === 2 && toppedOut) {
-      let raise = (basePayVar * COLA).toFixed(2);
+      // formula for raise in year 2 for topped out (COLA2 only, no step)
+      let raise = (basePayVar * COLA2).toFixed(2);
       console.log(`monthly raise in second year when topped out: ${raise}`);
+      return Number(raise);
+    } else if (year === 2) {
+      // formula for raise in year 2 for not topped out (COLA2 plus step)
+      let raise = ((basePayVar * COLA2) + (basePayVar * step)).toFixed(2);
+      console.log(`monthly raise in second year, not topped out: ${raise}`);
+      return Number(raise);
+    } else {
+      // formula for raise in year 1 (COLA1 + everybody gets a step)
+      let raise = ((basePayVar * COLA1) + (basePayVar * step)).toFixed(2);
+      console.log(`monthly raise in first year: ${raise}`);
+      return Number(raise);
+    }
+  }
+
+  function monthlyRaiseCOLAOnly(basePayVar, year) {
+    if (!basePayVar) {basePayVar = basePay}
+    if (year === 2) {
+      // formula for COLA2 only in second year
+      let raise = (basePayVar * COLA2).toFixed(2);
+      console.log(`monthly COLA in second year: ${raise}`);
       return raise;
     } else {
-      let raise = ((basePayVar * COLA) + (basePayVar * .047)).toFixed(2);
-      console.log(`monthly raise in first year: ${raise}`);
+      // formula for COLA1 only in first year
+      let raise = (basePayVar * COLA1).toFixed(2);
+      console.log(`monthly COLA in first year: ${raise}`);
       return raise;
     }
   }
 
-  function newBasePay(monthlyRaiseAmount) {
+  function newBasePay(monthlyRaiseAmount, basePayVar) {
+    if (!basePayVar) {basePayVar = basePay}
     const monthlyRaise_ = Number(monthlyRaiseAmount);
-    let newPay = (basePay + monthlyRaise_).toFixed(2);
+    let newPay = (basePayVar + monthlyRaise_).toFixed(2);
     console.log(`newBasePay: ${newPay}`)
     return newPay;
   }
@@ -127,38 +152,86 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   function secondYearRaise(firstYearBasePayAmount) {
-    const basePay = parseFloat(firstYearBasePayAmount);
-    const secondYearRaiseAmount = monthlyRaise(basePay, 2);
+    const basePayAmount = Number(firstYearBasePayAmount);
+    const secondYearRaiseAmount = monthlyRaise(basePayAmount, 2);
     console.log(`secondYearRaise: ${secondYearRaiseAmount}`);
     return secondYearRaiseAmount;
   }
 
-  function annualImpact(monthlyRaise) {
-    let impact = (monthlyRaise * 12).toFixed(2);
-    console.log(`annualImpact: ${impact}`);
-    return impact;
+  function secondYearBasePay(firstYearBasePayAmount) {
+    const basePayAmount = Number(firstYearBasePayAmount);
+    console.log(`################## ${basePayAmount}`);
+    console.log(typeof basePayAmount);
+    const secondYearRaiseAmount = Number(monthlyRaise(basePayAmount, 2));
+    console.log(`################## ${secondYearRaiseAmount}`);
+    console.log(typeof secondYearRaiseAmount);
+    const secondYearBasePayAmount = Number(basePayAmount + secondYearRaiseAmount).toFixed(2);
+    console.log(`secondYearBasePay: ${secondYearBasePayAmount}`);
+    return Number(secondYearBasePayAmount);
+  }
+
+  function annualImpact(year, basePayV) {
+    let impact = 0;
+    let basePayVar = Number(basePayV);
+    let basePay_ = Number(basePay);
+    if (year === 2 && toppedOut) {
+      // if topped out, annual impact in year 2 is
+      // final first year's base pay (after step) plus 2nd year COLA * 12
+      // minus original base pay * 12 (diff between original & contract wins)
+      let secondYearMonthlyAfterCOLA = Number(basePayVar + (basePayVar * COLA2));
+      impact = ((Number(secondYearMonthlyAfterCOLA) * 12) - Number(basePay_ * 12)).toFixed(2);
+      console.log(`!@#$%%^&* ${Number(impact)}`);
+    } else if (year === 2 && !toppedOut) {
+      // if not topped out, annual impact in year 2 is
+      // final first year's base pay (after step) plus 2nd year COLA * 6
+      // plus second year's base pay (after second step) * 6
+      // minus original base pay * 12 (diff between original & contract wins)
+      let secondYearMonthlyAfterCOLA = Number(basePayVar + (basePayVar * COLA2));
+      let impact1st6Months = (secondYearMonthlyAfterCOLA - basePay_) * 6;
+      let secondYearMonthlyAfterStep = Number(secondYearMonthlyAfterCOLA + (secondYearMonthlyAfterCOLA * step));
+      let impact2nd6Months = (secondYearMonthlyAfterStep - basePay_) * 6;
+      impact = (impact1st6Months + impact2nd6Months).toFixed(2);
+      console.log(`!@#$%%^&* ${Number(impact)}`);
+    } else {
+      // in year 1, basePay is user-provided base pay
+      // before any steps or COLAs are applied
+      // impact is 12 months of COLA plus 6 months of step
+      // minus original base pay * 12 (diff between original & contract wins)
+      let firstYearMonthlyAfterCOLA = Number(basePay_ + (basePay_ * COLA1));
+      console.log(`!@#$%%^&* ${firstYearMonthlyAfterCOLA}`);
+      let impact1st6Months = (basePay_ * COLA1) * 6;
+      console.log(`!@#$%%^&* ${impact1st6Months.toFixed(2)}`);
+      let firstYearMonthlyAfterStep = Number(firstYearMonthlyAfterCOLA + (firstYearMonthlyAfterCOLA * step));
+      console.log(`!@#$%%^&* ${firstYearMonthlyAfterStep.toFixed(2)}`);
+      let impact2nd6Months = (firstYearMonthlyAfterStep - basePay_) * 6;
+      console.log(`!@#$%%^&* ${impact2nd6Months.toFixed(2)}`);
+      impact = (impact1st6Months + impact2nd6Months).toFixed(2);
+      console.log(`!@#$%%^&* ${Number(impact)}`);
+    }
+    console.log(`annualImpact: ${Number(impact)}`);
+    return Number(impact);
   }
 
   function totalLifeOfContract() {
 
     let firstYearRaiseAmount = firstYearRaise();
     let firstYearBasePayAmount = firstYearBasePay();
-    let firstYearTotal = annualImpact(firstYearRaiseAmount);
+    let firstYearTotal = annualImpact(1);
     console.log(`firstYearTotal: ${firstYearTotal}`);
 
     let secondYearRaiseAmount = secondYearRaise(firstYearBasePayAmount);
-    let secondYearTotal = annualImpact(secondYearRaiseAmount);
+    let secondYearTotal = annualImpact(2, firstYearBasePayAmount);
     console.log(`secondYearTotal: ${secondYearTotal}`);
 
-    let lifeOfContract = (parseFloat(firstYearTotal) + parseFloat(secondYearTotal)).toFixed(2);
+    let lifeOfContract = (Number(firstYearTotal) + Number(secondYearTotal)).toFixed(2);
     console.log(`lifeOfContract: ${lifeOfContract}`);
 
-    return lifeOfContract;
+    return Number(lifeOfContract);
   }
 
   // generate results string and message
-  function resultsString(basePay, firstYearRaise, secondYearRaise, lifeOfContractTotal, toppedOut) {
-    return `<p>If your base pay is $${basePay}${toppedOut ? " and you are topped out," : ","} your raise in the first year of the contract will be <strong>$${firstYearRaise}</strong> per month. In the second year of the contract it will be <strong>$${secondYearRaise}</strong> per month. Over the two years of the contract this adds up to an extra <strong>$${lifeOfContractTotal} in your pocket.</p>`
+  function resultsString(firstYearRaiseAmount, secondYearRaiseAmount, lifeOfContractTotal, secondYearBasePayAmount) {
+    return `<p>If your base pay is $${basePay}${toppedOut ? " and you are topped out," : ","} your total raise in the first year of the contract after your step increase will be <strong>$${firstYearRaiseAmount}</strong> per month. In the second year of the contract${!toppedOut ? " after your step increase" : ""} it will be <strong>$${secondYearRaiseAmount}</strong> per month. Over the two years of the contract this adds up to an extra <strong>$${lifeOfContractTotal} in your pocket. And by July 1 2020, your new monthly base pay will be $${secondYearBasePayAmount}</p>`
   }
 
   // On reload, reload page
@@ -181,7 +254,8 @@ document.addEventListener("DOMContentLoaded", function(){
     let firstYearRaiseAmount = firstYearRaise();
     let firstYearBasePayAmount = firstYearBasePay();
     let secondYearRaiseAmount = secondYearRaise(firstYearBasePayAmount);
-    results.innerHTML = resultsString(basePay, firstYearRaiseAmount, secondYearRaiseAmount, totalLifeOfContractAmount, toppedOut);
+    let secondYearBasePayAmount = Number(secondYearBasePay(firstYearBasePayAmount));
+    results.innerHTML = resultsString(firstYearRaiseAmount, secondYearRaiseAmount, totalLifeOfContractAmount, secondYearBasePayAmount);
 
   }
 
@@ -194,273 +268,5 @@ document.addEventListener("DOMContentLoaded", function(){
 
   submit.addEventListener("click", handleSubmit);
   startOver.addEventListener("click", handleReload);
-
-  // calculator functionality
-  // console.log('calcscript');
-
-  // let display = "";
-  // let num1 = 0;
-  // let num2 = 0;
-  // let op = "";
-  // let ops = {
-  //   "+": "+",
-  //   "-": "-",
-  //   "*": "x",
-  //   "/": "÷"
-  // };
-  // let state = "start";
-  // let total = 0;
-  // let exp = "";
-  // BigNumber.config(10);
-
-  // function resetVars() {
-  //   display = "";
-  //   exp = "";
-  //   num1 = 0;
-  //   num2 = 0;
-  //   total = 0;
-  //   op = "";
-  //   state = "start";
-  //   displaySet(display);
-  //   updateVars();
-  // }
-
-  // function updateVars() {
-  //   if (exp.length <= 23) {
-  //   $("#exp").text(exp); }
-  //   else {
-  //     $("#exp").text(exp.substr(0,23));
-  //   }
-  //   console.log("display: " + display + ", num1: " + num1 + ", num2: " + num2 + ", op: " + op + ", state: " + state + ", total: " + total + ", exp: " + exp);
-  // }
-
-  // function number(kval) {
-  //   calc('num', kval);
-  //   exp += kval.toString();
-  // }
-
-  // function eq() {
-  //   if (state !== "op" && state != "equals") {
-  //     calc('eq', 'eq');
-  //     state = "equals";
-  //     exp += ("=" + total);
-  //   } else if (state === "equals") {
-  //     calc('eq', 'eq');
-  //     state = "equals";
-  //   }
-  // }
-
-  // function dot() {
-  //   calc('dot', '.');
-  //   if (state !== 'dot' && exp.indexOf('.') === -1 && state !== 'equals') {
-  //     exp += '.';
-  //   }
-  // }
-
-  // function oper(kval) {
-  //   op = kval;
-  //   calc('op', 'op');
-  //   state = "op";
-  // }
-
-  // function ce() {
-  //   display = display.slice(0, -1);
-  //   exp = exp.slice(0, -1);
-  //   displaySet(display);
-  //   updateVars();
-  //   calc('ce', 'ce');
-  // }
-
-  // $(".calcbtn").on('click', function() {
-  //   let kval = $(this).attr('value');
-  //   if ($(this).hasClass("num")) {
-  //     number(kval);
-  //   } else if ($(this).hasClass("eq")) {
-  //     eq();
-  //   } else if ($(this).hasClass("dot")) {
-  //     dot();
-  //   } else if ($(this).hasClass("op")) {
-  //     oper(kval);
-  //   } else if ($(this).hasClass("ce")) {
-  //     ce();
-  //   } else if ($(this).hasClass("ac")) {
-  //     resetVars();
-  //   }
-  //     updateVars();
-  // });
-
-  // document.addEventListener("keydown", function(e) {
-  //   e.preventDefault();
-  //   var key = e.keyCode ? e.keyCode : e.which;
-  //   if (key >= 48 && key <= 57) {
-  //     let kval = key - 48;
-  //     number(kval);
-  //   } else if (key === 107 || key === 109 || key === 106 || key === 111) {
-  //     let opkey = {
-  //       107: "+",
-  //       109: "-",
-  //       106: "*",
-  //       111: "/"
-  //     };
-  //     kval = opkey[key];
-  //     oper(kval);
-  //   } else if (key === 110 || key === 190) {
-  //     dot();
-  //   } else if (key === 8) {
-  //     ce();
-  //   } else if (key === 46 || key === 12) {
-  //     resetVars();
-  //   } else if (key === 13 || key === 187) {
-  //     eq();
-  //   }
-  //   updateVars();
-  // });
-
-  // function displaySet(v) {
-  //   display = v.toString();
-  //   if (display.length > 10) {
-  //     $('#display').text(display.substr(0, 10));
-  //   } else {
-  //     $('#display').text(display);
-  //   }
-  // }
-
-  // function displayApp(v) {
-  //   display = display.toString();
-  //   display += v.toString();
-  //   displaySet(display);
-  // }
-
-  // function equals(num1, num2, op) {
-  //   if (op === "+") {
-  //     return num1.plus(num2).round(10);
-  //   } else if (op === "-") {
-  //     return num1.minus(num2).round(10);
-  //   } else if (op === "*") {
-  //     return num1.times(num2).round(10);
-  //   } else if (op === "/") {
-  //     return num1.div(num2).round(10);
-  //   }
-  // }
-
-  // function calc(ktype, kval) {
-  //   switch (state) {
-  //     case "start":
-  //       if (ktype === "num") {
-  //         num1 = new BigNumber(kval);
-  //         total = num1;
-  //         displaySet(num1);
-  //         state = "num1";
-  //       } else if (ktype === "dot") {
-  //         displaySet("0" + kval);
-  //         state = "num1dot";
-  //       }
-  //       break;
-  //     case "num1":
-  //       if (ktype === "num") {
-  //         displayApp(kval);
-  //         num1 = new BigNumber(display);
-  //         total = num1;
-  //         state = "num1";
-  //       } else if (ktype === "dot") {
-  //         displayApp(kval);
-  //         state = "num1dot";
-  //       } else if (ktype === "ce") {
-  //         num1 = new BigNumber(display);
-  //       } else if (ktype === "op") {
-  //         exp += ops[op].toString();
-  //       }
-  //       break;
-  //     case "num1dot":
-  //       if (ktype === "num") {
-  //         displayApp(kval);
-  //         num1 = new BigNumber(display);
-  //       } else if (ktype === "ce") {
-  //         num1 = new BigNumber(display);
-  //       } else if (ktype === "op") {
-  //         exp += ops[op].toString();
-  //       }
-  //       break;
-  //     case "op":
-  //       if (ktype === "num") {
-  //         displaySet(kval);
-  //         num2 = new BigNumber(display);
-  //         state = "num2";
-  //       } else if (ktype === "dot") {
-  //         displaySet("0" + kval);
-  //         num2 = new BigNumber(display);
-  //         state = "num2dot";
-  //       } else if (ktype === "ce") {
-  //         op = "";
-  //         num1 = 0;
-  //         state = "start";
-  //       }
-  //       break;
-  //     case "num2":
-  //       if (ktype === "num") {
-  //         displayApp(kval);
-  //         num2 = new BigNumber(display);
-  //         state = "num2";
-  //       } else if (ktype === "dot") {
-  //         displayApp(kval);
-  //         state = "num2dot";
-  //       } else if (ktype === "op") {
-  //         total = equals(num1, num2, op);
-  //         updateVars();
-  //         displaySet(total);
-  //         num1 = total;
-  //         exp += ops[op];
-  //       } else if (ktype === "eq") {
-  //         total = equals(num1, num2, op);
-  //         updateVars();
-  //         displaySet(total);
-  //         num1 = total;
-  //       } else if (ktype === "ce") {
-  //         num2 = new BigNumber(display);
-  //         if (isNumber(exp[exp.length - 1])) {
-  //           state = "num2";
-  //         } else if (exp[exp.length - 1] === ".") {
-  //           state = "num2dot";
-  //         } else {
-  //           state = "op";
-  //         }
-  //       }
-  //       break;
-  //     case "num2dot":
-  //       if (ktype === "num") {
-  //         displayApp(kval);
-  //         num2 = new BigNumber(display);
-  //         state = "num2";
-  //       } else if (ktype === "ce") {
-  //         num2 = new BigNumber(display);
-  //       } else if (ktype === "op") {
-  //         exp += ops[op].toString();
-  //       }
-  //       break;
-  //     case "equals":
-  //       exp = "";
-  //       if (ktype === "num") {
-  //         num1 = new BigNumber(kval);
-  //         num2 = 0;
-  //         total = 0;
-  //         op = "";
-  //         displaySet(num1);
-  //         state = "num1";
-  //       } else if (ktype === "dot") {
-  //         displaySet("0" + kval);
-  //         state = "num1dot";
-  //       } else if (ktype === "eq") {
-  //         total = equals(num1, num2, op);
-  //         exp = (num1 + ops[op] + num2 + "=" + total);
-  //         displaySet(total);
-  //         num1 = display;
-  //         state = "equals";
-  //       } else if (ktype === "op") {
-  //         exp = num1 + ops[op];
-  //       }
-  //       break;
-  //   }
-  // }
-
 
 });
